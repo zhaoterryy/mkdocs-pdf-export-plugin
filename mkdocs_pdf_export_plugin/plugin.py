@@ -51,10 +51,10 @@ class PdfExportPlugin(BasePlugin):
 
         self.num_files += 1
 
-        path = os.path.dirname(page.abs_output_path)
+        path = os.path.dirname(page.file.abs_dest_path)
         os.makedirs(path, exist_ok=True)
 
-        filename = os.path.splitext(os.path.basename(page.input_path))[0]
+        filename = os.path.splitext(os.path.basename(page.file.src_path))[0]
 
         base_url = urls.path2url(os.path.join(path, filename))
 
