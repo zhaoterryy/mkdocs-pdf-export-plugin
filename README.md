@@ -4,25 +4,18 @@
 
 The pdf-export plugin will export all markdown pages in your MkDocs repository as PDF files using [WeasyPrint](http://weasyprint.org/). The exported documents support many advanced features missing in most other PDF exports, such as a PDF Index and support for [CSS paged media module](https://drafts.csswg.org/css-page-3/).
 
-## Before you start
+## Requirements
 
-Setting this up is not easy. If you're running Windows or MacOS, it will require you to install third-party software on your system. Getting it to work perfectly also requires some customization of your mkdocs setup (extra stylesheet and javascript).
+1. This package requires MkDocs version 1.0 or higher
+2. WeasyPrint depends on cairo, Pango and GDK-PixBuf which need to be installed separately. Please follow the installation instructions for your platform carefully:
+    - [Linux][weasyprint-linux]
+    - [MacOS][weasyprint-macos]
+    - [Windows][weasyprint-windows]
+3. Explicit support for your mkdocs theme is probably required. As of now, the only supported theme is [mkdocs-material](mkdocs-material). A generic version will just generate the PDF files and put the download link into a `<link>` tag.
 
-After testing many different solutions to export PDFs from MkDocs, this has been the only one that fulfilled all expected features from a PDF export:
-
-- PDF index for quick navigation
-- Working hyperlinks (except for inter-page links)
-- Decent page break handling (no section title on page 1 and contents on page 2)
+If you want to add a new theme, see [adding support for new themes](#adding-support-for-new-themes) for more information.
 
 ## Installation
-
-> **Note:** This package requires MkDocs version 0.17 or higher.
-
-WeasyPrint depends on cairo, Pango and GDK-PixBuf which need to be installed separately. Please follow the installation instructions for your platform carefully:
-
-- [Linux][weasyprint-linux]
-- [MacOS][weasyprint-macos]
-- [Windows][weasyprint-windows]
 
 Install the package with pip:
 
@@ -41,26 +34,6 @@ plugins:
 > **Note:** If you have no `plugins` entry in your config file yet, you'll likely also want to add the `search` plugin. MkDocs enables it by default if there is no `plugins` entry set, but now you have to enable it explicitly.
 
 More information about plugins in the [MkDocs documentation][mkdocs-plugins].
-
-## Install theme support
-
-Depending on the mkdocs theme you use, you might need to add some support files for this plugin. See [adding support for new themes](#adding-support-for-new-themes) for more information.
-
-### mkdocs-material
-
-If you are using the [mkdocs-material theme][mkdocs-material], you'll need to add the following two files to your mkdocs project:
-
-- [`docs/assets/stylesheets/weasyprint.css`](themes/mkdocs-material/weasyprint.css)
-- [`docs/assets/javascripts/pdf-download.js`](themes/mkdocs-material/pdf-download.js)
-
-Reference them from your `mkdocs.yml` file so they are included in the build output:
-
-```yaml
-extra_css:
-    - assets/stylesheets/weasyprint.css
-extra_javascript:
-    - assets/javascripts/pdf-download.js
-```
 
 ## Testing
 
@@ -94,15 +67,38 @@ This option allows you to use a different CSS media type (or a custom one like `
 
 Setting this option will enable the build only if there is an environment variable set to 1. This is useful to disable building the PDF files during development, since it can take a long time to export all files. Default is not set.
 
+## Adjusting the output
+
+The resulting PDF can be customized easily by adding a custom stylesheet such as the following:
+
+```
+@page {
+    size: a4 portrait;
+    margin: 25mm 10mm 25mm 10mm;
+    counter-increment: page;
+    font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif;
+    white-space: pre;
+    color: grey;
+    @top-left {
+        content: '© 2018 My Company';
+    }
+    @top-center {
+        content: string(chapter);
+    }
+    @top-right {
+        content: 'Page ' counter(page);
+    }
+}
+```
+
 ## Adding support for new themes
 
-It is possible that WeasyPrint will not perfectly export the PDF initially. Depending on the theme you're using, there might be issues such as wrong text rendering or even missing pages. These issues are normally caused by combinations of CSS attributes not handled perfectly by WeasyPrint.
+If you use a mkdocs theme which is currently not supported, check out the `themes/material.py` file and adjust it according to your requirements. You will have to implement two methods to support a theme:
 
-It's normally easiest to fix these issues by providing an additional stylesheet which gets applied for the print medium.
+1. `get_stylesheet` should return a CSS which gets applied to fix issues with weasyprint
+2. `modify_html` should add a link to the PDF download before writing it to disk
 
-Since the plugin does not have any knowledge about how your theme works, it will only generate the PDF and add a `<link rel="alternate" href="filename.pdf" type="application/pdf" title="PDF Export">` element to the HTML before writing it to disk. To add a download link to your page, you'll need to add it to the page while loading.
-
-Please see one of the existing themes on examples of how to do this.
+If there is no explicit support for your theme, the generic version will just add a `<link>` tag in the head pointing to the generated PDF.
 
 ## Contributing
 

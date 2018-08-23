@@ -7,6 +7,8 @@ from mkdocs.plugins import BasePlugin
 from mkdocs import utils
 from weasyprint import HTML, urls
 
+from .renderer import Renderer
+
 
 class PdfExportPlugin(BasePlugin):
 
@@ -19,12 +21,15 @@ class PdfExportPlugin(BasePlugin):
     )
 
     def __init__(self):
+        self.renderer = None
         self.enabled = True
         self.num_files = 0
         self.num_errors = 0
         self.total_time = 0
 
     def on_config(self, config):
+        self.renderer = Renderer(config['theme'].name)
+
         from weasyprint.logger import LOGGER
         import logging
 
@@ -57,13 +62,11 @@ class PdfExportPlugin(BasePlugin):
         filename = os.path.splitext(os.path.basename(page.file.src_path))[0]
 
         base_url = urls.path2url(os.path.join(path, filename))
+        pdf_file = filename + '.pdf'
 
         try:
-            html = HTML(string=output_content, base_url=base_url, media_type=self.config['media_type'])
-            html.write_pdf(os.path.join(path, filename + '.pdf'))
-
-            link = '<link rel="alternate" href="{}.pdf" type="application/pdf" title="PDF Export">'.format(filename)
-            output_content = output_content.replace('</head>', link + '\n</head>')
+            self.renderer.render_pdf(output_content, base_url, os.path.join(path, pdf_file))
+            output_content = self.renderer.add_link(output_content, pdf_file)
         except Exception as e:
             print('Error converting {} to PDF: {}'.format(page.input_path, e), file=sys.stderr)
             self.num_errors += 1
