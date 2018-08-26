@@ -114,7 +114,7 @@ If you want to contribute to the code of this project, please read the [Contribu
 Special thanks go to [Lukas Geiter][lukasgeiter] for developing the [mkdocs-awesome-pages-plugin][awesome-pages-plugin] which I could use as a base and for convincing me to write a plugin for this.
 
 [travis-status]: https://travis-ci.org/shauser/mkdocs-pdf-export-plugin.svg?branch=master
-[travis-link]: https://travis-ci.org/shauser/mkdocs-awesome-pages-plugin
+[travis-link]: https://travis-ci.org/shauser/mkdocs-pdf-export-plugin
 [weasyprint-linux]: https://weasyprint.readthedocs.io/en/latest/install.html#linux
 [weasyprint-macos]: https://weasyprint.readthedocs.io/en/latest/install.html#os-x
 [weasyprint-windows]: https://weasyprint.readthedocs.io/en/latest/install.html#windows
