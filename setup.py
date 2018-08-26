@@ -15,7 +15,7 @@ setup(
     license='MIT',
     python_requires='>=3.4',
     install_requires=[
-        'mkdocs>=1.0',
+        'mkdocs>=0.17',
         'weasyprint>=0.42'
     ],
     classifiers=[

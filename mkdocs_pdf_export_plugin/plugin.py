@@ -51,10 +51,18 @@ class PdfExportPlugin(BasePlugin):
 
         self.num_files += 1
 
-        path = os.path.dirname(page.file.abs_dest_path)
+        try:
+            abs_dest_path = page.file.abs_dest_path
+            src_path = page.file.src_path
+        except AttributeError:
+            # Support for mkdocs <1.0
+            abs_dest_path = page.abs_output_path
+            src_path = page.input_path
+
+        path = os.path.dirname(abs_dest_path)
         os.makedirs(path, exist_ok=True)
 
-        filename = os.path.splitext(os.path.basename(page.file.src_path))[0]
+        filename = os.path.splitext(os.path.basename(src_path))[0]
 
         base_url = urls.path2url(os.path.join(path, filename))
 
@@ -65,7 +73,7 @@ class PdfExportPlugin(BasePlugin):
             link = '<link rel="alternate" href="{}.pdf" type="application/pdf" title="PDF Export">'.format(filename)
             output_content = output_content.replace('</head>', link + '\n</head>')
         except Exception as e:
-            print('Error converting {} to PDF: {}'.format(page.input_path, e), file=sys.stderr)
+            print('Error converting {} to PDF: {}'.format(src_path, e), file=sys.stderr)
             self.num_errors += 1
 
         end = timer()
