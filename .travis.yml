@@ -4,6 +4,8 @@ python:
   - 3.5
   - 3.6
 
+script: true
+
 branches:
   only:
     - master
