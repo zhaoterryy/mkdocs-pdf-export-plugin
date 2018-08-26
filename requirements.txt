@@ -1,2 +1,3 @@
+beautifulsoup4
 weasyprint>=0.42
 mkdocs>=0.17
