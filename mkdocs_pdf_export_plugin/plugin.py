@@ -17,7 +17,7 @@ class PdfExportPlugin(BasePlugin):
     config_scheme = (
         ('media_type', config_options.Type(utils.string_types, default=DEFAULT_MEDIA_TYPE)),
         ('verbose', config_options.Type(bool, default=False)),
-        ('build_if_env', config_options.Type(utils.string_types)),
+        ('enabled_if_env', config_options.Type(utils.string_types)),
     )
 
     def __init__(self):
