@@ -44,9 +44,10 @@ class PdfExportPlugin(BasePlugin):
 
         if 'enabled_if_env' in self.config:
             env_name = self.config['enabled_if_env']
-            self.enabled = os.environ.get(env_name) == '1'
-            if not self.enabled:
-                print('PDF export is disabled (set environment variable {} to 1 to enable)'.format(env_name))
+            if env_name:
+                self.enabled = os.environ.get(env_name) == '1'
+                if not self.enabled:
+                    print('PDF export is disabled (set environment variable {} to 1 to enable)'.format(env_name))
 
     def on_post_page(self, output_content, page, config):
         if not self.enabled:
