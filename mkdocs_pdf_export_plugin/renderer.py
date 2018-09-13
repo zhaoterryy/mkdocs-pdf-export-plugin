@@ -30,7 +30,7 @@ class Renderer(object):
     @staticmethod
     def _load_theme_handler(theme: str):
         try:
-            module_name = '.' + theme.replace('-', '_')
+            module_name = '.' + (theme or 'generic').replace('-', '_')
             return import_module(module_name, 'mkdocs_pdf_export_plugin.themes')
         except ImportError as e:
             print('Could not load theme {}: {}'.format(theme, e), file=sys.stderr)
