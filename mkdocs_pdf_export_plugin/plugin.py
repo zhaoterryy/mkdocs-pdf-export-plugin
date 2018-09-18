@@ -5,9 +5,6 @@ from timeit import default_timer as timer
 from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
 from mkdocs import utils
-from weasyprint import HTML, urls
-
-from .renderer import Renderer
 
 
 class PdfExportPlugin(BasePlugin):
@@ -28,6 +25,15 @@ class PdfExportPlugin(BasePlugin):
         self.total_time = 0
 
     def on_config(self, config):
+        if 'enabled_if_env' in self.config:
+            env_name = self.config['enabled_if_env']
+            if env_name:
+                self.enabled = os.environ.get(env_name) == '1'
+                if not self.enabled:
+                    print('PDF export is disabled (set environment variable {} to 1 to enable)'.format(env_name))
+                    return
+
+        from .renderer import Renderer
         self.renderer = Renderer(config['theme'].name)
 
         from weasyprint.logger import LOGGER
@@ -41,13 +47,6 @@ class PdfExportPlugin(BasePlugin):
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
         LOGGER.addHandler(handler)
-
-        if 'enabled_if_env' in self.config:
-            env_name = self.config['enabled_if_env']
-            if env_name:
-                self.enabled = os.environ.get(env_name) == '1'
-                if not self.enabled:
-                    print('PDF export is disabled (set environment variable {} to 1 to enable)'.format(env_name))
 
     def on_post_page(self, output_content, page, config):
         if not self.enabled:
@@ -70,6 +69,7 @@ class PdfExportPlugin(BasePlugin):
 
         filename = os.path.splitext(os.path.basename(src_path))[0]
 
+        from weasyprint import urls
         base_url = urls.path2url(os.path.join(path, filename))
         pdf_file = filename + '.pdf'
 
