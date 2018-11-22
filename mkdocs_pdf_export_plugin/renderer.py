@@ -14,9 +14,9 @@ class Renderer(object):
         self.combined_doc = None
 
     def write_pdf(self, content: str, base_url: str, filename: str):
-        self.render_pdf(content, base_url).write_pdf(filename)
+        self.render_doc(content, base_url).write_pdf(filename)
 
-    def render_pdf(self, content: str, base_url: str):
+    def render_doc(self, content: str, base_url: str):
         soup = BeautifulSoup(content, 'html.parser')
 
         stylesheet = self.theme.get_stylesheet()
@@ -29,8 +29,8 @@ class Renderer(object):
         html = HTML(string=str(soup), base_url=base_url)
         return html.render()
 
-    def add_pdf(self, content: str, base_url: str):
-        render = self.render_pdf(content, base_url)
+    def add_doc(self, content: str, base_url: str):
+        render = self.render_doc(content, base_url)
         cdoc = self.combined_doc
         if cdoc is None:
             self.combined_doc = render

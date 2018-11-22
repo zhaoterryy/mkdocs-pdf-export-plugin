@@ -15,7 +15,8 @@ class PdfExportPlugin(BasePlugin):
         ('media_type', config_options.Type(utils.string_types, default=DEFAULT_MEDIA_TYPE)),
         ('verbose', config_options.Type(bool, default=False)),
         ('enabled_if_env', config_options.Type(utils.string_types)),
-        ('combined', config_options.Type(bool, default=False))
+        ('combined', config_options.Type(bool, default=False)),
+        ('combined_output_path', config_options.Type(utils.string_types, default="pdf/combined.pdf"))
     )
 
     def __init__(self):
@@ -81,8 +82,8 @@ class PdfExportPlugin(BasePlugin):
 
         try:
             if self.combined:
-                self.renderer.add_pdf(output_content, base_url)
-                output_content = self.renderer.add_link(output_content, "/pdf/combined.pdf")
+                self.renderer.add_doc(output_content, base_url)
+                output_content = self.renderer.add_link(output_content, self.config['combined_output_path'])
             else:
                 self.renderer.write_pdf(output_content, base_url, os.path.join(path, pdf_file))
                 output_content = self.renderer.add_link(output_content, pdf_file)
@@ -97,7 +98,7 @@ class PdfExportPlugin(BasePlugin):
 
     def on_post_build(self, config):
         if self.combined:
-            abs_pdf_path = os.path.join(config['site_dir'], "pdf/combined.pdf")
+            abs_pdf_path = os.path.join(config['site_dir'], self.config['combined_output_path'])
             os.makedirs(os.path.dirname(abs_pdf_path), exist_ok=True)
             self.renderer.write_combined_pdf(abs_pdf_path)
 
