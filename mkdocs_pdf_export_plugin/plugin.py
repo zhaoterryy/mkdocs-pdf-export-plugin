@@ -83,7 +83,8 @@ class PdfExportPlugin(BasePlugin):
         try:
             if self.combined:
                 self.renderer.add_doc(output_content, base_url)
-                output_content = self.renderer.add_link(output_content, self.config['combined_output_path'])
+                pdf_path = self.get_path_to_pdf_from(page.file.dest_path)
+                output_content = self.renderer.add_link(output_content, pdf_path)
             else:
                 self.renderer.write_pdf(output_content, base_url, os.path.join(path, pdf_file))
                 output_content = self.renderer.add_link(output_content, pdf_file)
@@ -106,3 +107,8 @@ class PdfExportPlugin(BasePlugin):
             print('Converting {} files to PDF took {:.1f}s'.format(self.num_files, self.total_time))
             if self.num_errors > 0:
                 print('{} conversion errors occurred (see above)'.format(self.num_errors))
+
+    def get_path_to_pdf_from(self, start):
+        pdf_split = os.path.split(self.config['combined_output_path'])
+        start_dir = os.path.split(start)[0]
+        return os.path.join(os.path.relpath(pdf_split[0], start_dir), pdf_split[1])
