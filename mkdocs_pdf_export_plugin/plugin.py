@@ -15,11 +15,14 @@ class PdfExportPlugin(BasePlugin):
         ('media_type', config_options.Type(utils.string_types, default=DEFAULT_MEDIA_TYPE)),
         ('verbose', config_options.Type(bool, default=False)),
         ('enabled_if_env', config_options.Type(utils.string_types)),
+        ('combined', config_options.Type(bool, default=False)),
+        ('combined_output_path', config_options.Type(utils.string_types, default="pdf/combined.pdf"))
     )
 
     def __init__(self):
         self.renderer = None
         self.enabled = True
+        self.combined = False
         self.num_files = 0
         self.num_errors = 0
         self.total_time = 0
@@ -33,8 +36,12 @@ class PdfExportPlugin(BasePlugin):
                     print('PDF export is disabled (set environment variable {} to 1 to enable)'.format(env_name))
                     return
 
+        self.combined = self.config['combined']
+        if self.combined:
+            print('Combined PDF export is enabled')
+
         from .renderer import Renderer
-        self.renderer = Renderer(config['theme'].name)
+        self.renderer = Renderer(config['theme'].name, self.combined)
 
         from weasyprint.logger import LOGGER
         import logging
@@ -74,8 +81,13 @@ class PdfExportPlugin(BasePlugin):
         pdf_file = filename + '.pdf'
 
         try:
-            self.renderer.render_pdf(output_content, base_url, os.path.join(path, pdf_file))
-            output_content = self.renderer.add_link(output_content, pdf_file)
+            if self.combined:
+                self.renderer.add_doc(output_content, base_url)
+                pdf_path = self.get_path_to_pdf_from(page.file.dest_path)
+                output_content = self.renderer.add_link(output_content, pdf_path)
+            else:
+                self.renderer.write_pdf(output_content, base_url, os.path.join(path, pdf_file))
+                output_content = self.renderer.add_link(output_content, pdf_file)
         except Exception as e:
             print('Error converting {} to PDF: {}'.format(src_path, e), file=sys.stderr)
             self.num_errors += 1
@@ -86,7 +98,17 @@ class PdfExportPlugin(BasePlugin):
         return output_content
 
     def on_post_build(self, config):
+        if self.combined:
+            abs_pdf_path = os.path.join(config['site_dir'], self.config['combined_output_path'])
+            os.makedirs(os.path.dirname(abs_pdf_path), exist_ok=True)
+            self.renderer.write_combined_pdf(abs_pdf_path)
+
         if self.enabled:
             print('Converting {} files to PDF took {:.1f}s'.format(self.num_files, self.total_time))
             if self.num_errors > 0:
                 print('{} conversion errors occurred (see above)'.format(self.num_errors))
+
+    def get_path_to_pdf_from(self, start):
+        pdf_split = os.path.split(self.config['combined_output_path'])
+        start_dir = os.path.split(start)[0]
+        return os.path.join(os.path.relpath(pdf_split[0], start_dir), pdf_split[1])
