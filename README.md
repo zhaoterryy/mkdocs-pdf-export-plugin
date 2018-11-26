@@ -68,6 +68,14 @@ This option allows you to use a different CSS media type (or a custom one like `
 
 Setting this option will enable the build only if there is an environment variable set to 1. This is useful to disable building the PDF files during development, since it can take a long time to export all files. Default is not set.
 
+### `combined`
+
+Setting this to `true` will combine all pages into a single PDF file. All download links will point to this file. Default is `false`.
+
+### `combined_output_path`
+
+This option allows you to use a different destination for the combined PDF file. Has no effect when `combined` is set to `false`. Default is `pdf/combined.pdf`.
+
 ## Adjusting the output
 
 The resulting PDF can be customized easily by adding a custom stylesheet such as the following:
