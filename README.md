@@ -80,6 +80,7 @@ This option allows you to use a different destination for the combined PDF file.
 
 This option allows you to specify a custom theme handler module. This path must be **relative to your project root** (See example below). Default is not set.
 
+`mkdocs.yml`:
 ```yaml
 plugins:
     - pdf-export:
@@ -91,6 +92,8 @@ project-root
 ├── docs
 ├── mkdocs.yml
 ├── site
+.
+.
 ```
 
 ## Adjusting the output
