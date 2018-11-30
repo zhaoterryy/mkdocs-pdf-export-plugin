@@ -11,7 +11,8 @@ class Renderer(object):
     def __init__(self, theme: str, combined: bool):
         self.theme = self._load_theme_handler(theme)
         self.combined = combined
-        self.combined_doc = None
+        self.page_order = []
+        self.pages = []
 
     def write_pdf(self, content: str, base_url: str, filename: str):
         self.render_doc(content, base_url).write_pdf(filename)
@@ -29,16 +30,16 @@ class Renderer(object):
         html = HTML(string=str(soup), base_url=base_url)
         return html.render()
 
-    def add_doc(self, content: str, base_url: str):
+    def add_doc(self, content: str, base_url: str, rel_url: str):
         render = self.render_doc(content, base_url)
-        cdoc = self.combined_doc
-        if cdoc is None:
-            self.combined_doc = render
-        else:
-            self.combined_doc = cdoc.copy(cdoc.pages + render.pages)
+        pos = self.page_order.index(rel_url)
+        self.pages[pos] = render
 
     def write_combined_pdf(self, output_path: str):
-        self.combined_doc.write_pdf(output_path)
+        flatten = lambda l: [item for sublist in l for item in sublist]
+        pages = flatten([p.pages for p in self.pages if p != None])
+
+        self.pages[0].copy(pages).write_pdf(output_path)
 
     def add_link(self, content: str, filename: str):
         return self.theme.modify_html(content, filename)
