@@ -55,6 +55,14 @@ class PdfExportPlugin(BasePlugin):
         handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
         LOGGER.addHandler(handler)
 
+    def on_nav(self, nav, config, files):
+        if self.enabled:
+            self.renderer.pages = [None] * len(nav.pages)
+            for page in nav.pages:
+                self.renderer.page_order.append(page.file.url)
+
+        return nav
+
     def on_post_page(self, output_content, page, config):
         if not self.enabled:
             return output_content
@@ -82,7 +90,7 @@ class PdfExportPlugin(BasePlugin):
 
         try:
             if self.combined:
-                self.renderer.add_doc(output_content, base_url)
+                self.renderer.add_doc(output_content, base_url, page.file.url)
                 pdf_path = self.get_path_to_pdf_from(page.file.dest_path)
                 output_content = self.renderer.add_link(output_content, pdf_path)
             else:
