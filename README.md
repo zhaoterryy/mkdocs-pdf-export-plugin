@@ -116,7 +116,9 @@ If you want to contribute to the code of this project, please read the [Contribu
 
 ## Special thanks
 
-Special thanks go to [Lukas Geiter][lukasgeiter] for developing the [mkdocs-awesome-pages-plugin][awesome-pages-plugin] which I could use as a base and for convincing me to write a plugin for this.
+Special thanks go to [Stephan Hauser][shauser] for the original development of this plugin.
+
+Special thanks go to [Lukas Geiter][lukasgeiter] for developing the [mkdocs-awesome-pages-plugin][awesome-pages-plugin] which was used as a base and for convincing [Stephan Hauser][shauser] to write a plugin for this.
 
 [travis-status]: https://travis-ci.org/shauser/mkdocs-pdf-export-plugin.svg?branch=master
 [travis-link]: https://travis-ci.org/shauser/mkdocs-pdf-export-plugin
@@ -128,4 +130,5 @@ Special thanks go to [Lukas Geiter][lukasgeiter] for developing the [mkdocs-awes
 [github-issues]: https://github.com/shauser/mkdocs-pdf-export-plugin/issues
 [contributing]: CONTRIBUTING.md
 [lukasgeiter]: https://github.com/lukasgeiter
+[shauser]: https://github.com/shauser
 [awesome-pages-plugin]: https://github.com/lukasgeiter/mkdocs-awesome-pages-plugin
