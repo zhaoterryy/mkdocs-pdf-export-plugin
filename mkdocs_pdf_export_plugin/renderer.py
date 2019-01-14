@@ -1,6 +1,8 @@
 import sys
+import os
 
 from importlib import import_module
+from importlib.util import spec_from_file_location, module_from_spec
 from weasyprint import HTML, Document
 from bs4 import BeautifulSoup
 
@@ -8,8 +10,8 @@ from .themes import generic as generic_theme
 
 
 class Renderer(object):
-    def __init__(self, theme: str, combined: bool):
-        self.theme = self._load_theme_handler(theme)
+    def __init__(self, combined: bool, theme: str, theme_handler_path: str=None):
+        self.theme = self._load_theme_handler(theme, theme_handler_path)
         self.combined = combined
         self.page_order = []
         self.pages = []
@@ -45,11 +47,22 @@ class Renderer(object):
         return self.theme.modify_html(content, filename)
 
     @staticmethod
-    def _load_theme_handler(theme: str):
+    def _load_theme_handler(theme: str, custom_handler_path: str = None):
+        module_name = '.' + (theme or 'generic').replace('-', '_')
+
+        if custom_handler_path:
+            try:
+                spec = spec_from_file_location(module_name, os.path.join(os.getcwd(), custom_handler_path))
+                mod = module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                return mod
+            except FileNotFoundError as e:
+                print('Could not load theme handler {} from custom directory "{}": {}'.format(theme, custom_handler_path, e), file=sys.stderr)
+                pass
+
         try:
-            module_name = '.' + (theme or 'generic').replace('-', '_')
             return import_module(module_name, 'mkdocs_pdf_export_plugin.themes')
         except ImportError as e:
-            print('Could not load theme {}: {}'.format(theme, e), file=sys.stderr)
+            print('Could not load theme handler {}: {}'.format(theme, e), file=sys.stderr)
             return generic_theme
 

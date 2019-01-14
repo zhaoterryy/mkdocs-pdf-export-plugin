@@ -76,6 +76,26 @@ Setting this to `true` will combine all pages into a single PDF file. All downlo
 
 This option allows you to use a different destination for the combined PDF file. Has no effect when `combined` is set to `false`. Default is `pdf/combined.pdf`.
 
+### `theme_handler_path`
+
+This option allows you to specify a custom theme handler module. This path must be **relative to your project root** (See example below). Default is not set.
+
+`mkdocs.yml`:
+```yaml
+plugins:
+    - pdf-export:
+        theme_handler_path: theme-handler.py
+```
+```bash
+project-root
+├── theme-handler.py
+├── docs
+├── mkdocs.yml
+├── site
+.
+.
+```
+
 ## Adjusting the output
 
 The resulting PDF can be customized easily by adding a custom stylesheet such as the following:

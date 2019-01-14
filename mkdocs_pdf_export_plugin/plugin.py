@@ -16,7 +16,8 @@ class PdfExportPlugin(BasePlugin):
         ('verbose', config_options.Type(bool, default=False)),
         ('enabled_if_env', config_options.Type(utils.string_types)),
         ('combined', config_options.Type(bool, default=False)),
-        ('combined_output_path', config_options.Type(utils.string_types, default="pdf/combined.pdf"))
+        ('combined_output_path', config_options.Type(utils.string_types, default="pdf/combined.pdf")),
+        ('theme_handler_path', config_options.Type(utils.string_types))
     )
 
     def __init__(self):
@@ -41,7 +42,7 @@ class PdfExportPlugin(BasePlugin):
             print('Combined PDF export is enabled')
 
         from .renderer import Renderer
-        self.renderer = Renderer(config['theme'].name, self.combined)
+        self.renderer = Renderer(self.combined, config['theme'].name, self.config['theme_handler_path'])
 
         from weasyprint.logger import LOGGER
         import logging
