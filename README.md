@@ -140,14 +140,14 @@ Special thanks go to [Stephan Hauser][shauser] for the original development of t
 
 Special thanks go to [Lukas Geiter][lukasgeiter] for developing the [mkdocs-awesome-pages-plugin][awesome-pages-plugin] which was used as a base and for convincing [Stephan Hauser][shauser] to write a plugin for this.
 
-[travis-status]: https://travis-ci.org/shauser/mkdocs-pdf-export-plugin.svg?branch=master
-[travis-link]: https://travis-ci.org/shauser/mkdocs-pdf-export-plugin
+[travis-status]: https://travis-ci.org/zhaoterryy/mkdocs-pdf-export-plugin.svg?branch=master
+[travis-link]: https://travis-ci.org/zhaoterryy/mkdocs-pdf-export-plugin
 [weasyprint-linux]: https://weasyprint.readthedocs.io/en/latest/install.html#linux
 [weasyprint-macos]: https://weasyprint.readthedocs.io/en/latest/install.html#os-x
 [weasyprint-windows]: https://weasyprint.readthedocs.io/en/latest/install.html#windows
 [mkdocs-plugins]: http://www.mkdocs.org/user-guide/plugins/
 [mkdocs-material]: https://github.com/squidfunk/mkdocs-material
-[github-issues]: https://github.com/shauser/mkdocs-pdf-export-plugin/issues
+[github-issues]: https://github.com/zhaoterryy/mkdocs-pdf-export-plugin/issues
 [contributing]: CONTRIBUTING.md
 [lukasgeiter]: https://github.com/lukasgeiter
 [shauser]: https://github.com/shauser
