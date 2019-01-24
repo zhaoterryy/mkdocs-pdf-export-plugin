@@ -25,17 +25,14 @@ def get_abs_asset_href(base_url: str, href: str):
 def replace_hrefs(soup: BeautifulSoup, base_url: str, combined: bool):
     # transforms all relative hrefs pointing to other html docs
     # into relative pdf hrefs
-    for a in soup.find_all('a'):
-        try:
-            a['href'] = get_rel_pdf_href(combined, a['href'])
-        except KeyError:
-            pass
+    for a in soup.find_all('a', href=True):
+        a['href'] = get_rel_pdf_href(combined, a['href'])
 
     # makes all relative asset links absolute
-    for link in soup.find_all('link'):
-        try:
-            link['href'] = get_abs_asset_href(base_url, link['href'])
-        except KeyError:
-            pass
+    for link in soup.find_all('link', href=True):
+        link['href'] = get_abs_asset_href(base_url, link['href'])
+
+    for asset in soup.find_all(src=True):
+        asset['src'] = get_abs_asset_href(base_url, asset['src'])
 
     return soup
