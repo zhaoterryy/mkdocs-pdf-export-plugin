@@ -7,6 +7,7 @@ from weasyprint import HTML, Document
 from bs4 import BeautifulSoup
 
 from .themes import generic as generic_theme
+from . import preprocessor
 
 
 class Renderer(object):
@@ -29,7 +30,8 @@ class Renderer(object):
 
             soup.head.append(style_tag)
 
-        html = HTML(string=str(soup), base_url=base_url)
+        soup = preprocessor.replace_hrefs(soup, base_url, self.combined)
+        html = HTML(string=str(soup))
         return html.render()
 
     def add_doc(self, content: str, base_url: str, rel_url: str):
