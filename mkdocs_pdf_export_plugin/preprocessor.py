@@ -45,20 +45,24 @@ def replace_asset_hrefs(soup: BeautifulSoup, base_url: str):
 
 # normalize href to site root
 def normalize_href(href: str, rel_url: str):
+    # foo/bar/baz/../../index.html -> foo/index.html
+    def reduce_rel(x):
+        try:
+            i = x.index('..')
+            if i is 0:
+                return x
+
+            del x[i]
+            del x[i - 1]
+            return reduce_rel(x)
+        except ValueError:
+            return x
+
     rel_dir = os.path.dirname(rel_url)
     href = str.split(os.path.join(rel_dir, href), '/')
-    while True:
-        try:
-            i_of_rel = href.index('..')
-            if i_of_rel is 0:
-                break
-
-            del href[i_of_rel]
-            del href[i_of_rel - 1]
-        except ValueError:
-            break
-
+    href = reduce_rel(href)
     href[-1], _ = os.path.splitext(href[-1])
+
     return os.path.join(*href)
 
 # normalize href to #foo/bar/section:id
