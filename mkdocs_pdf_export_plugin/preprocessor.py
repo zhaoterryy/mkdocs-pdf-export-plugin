@@ -3,15 +3,26 @@ import os
 from weasyprint import urls
 from bs4 import BeautifulSoup
 
-def rel_pdf_href(href: str):
-    head, tail = os.path.split(href)
-    filename, ext = tuple(os.path.splitext(tail))
+# check if href is relative --
+# if it is relative it *should* be an html that generates a PDF doc
+def is_doc(href: str):
+    tail = os.path.basename(href)
+    _, ext = os.path.splitext(tail)
 
     absurl = urls.url_is_absolute(href)
     abspath = os.path.isabs(href)
-    internal = href.startswith('#')
     htmlfile = ext.startswith('.html')
-    if absurl or abspath or internal or not htmlfile:
+    if absurl or abspath or not htmlfile:
+        return False
+    
+    return True
+    
+def rel_pdf_href(href: str):
+    head, tail = os.path.split(href)
+    filename, _ = os.path.splitext(tail)
+
+    internal = href.startswith('#')
+    if not is_doc(href) or internal:
         return href
 
     return urls.iri_to_uri(os.path.join(head, filename + '.pdf'))
@@ -32,47 +43,76 @@ def replace_asset_hrefs(soup: BeautifulSoup, base_url: str):
     
     return soup
 
+# normalize href to site root
+def normalize_href(href: str, rel_url: str):
+    rel_dir = os.path.dirname(rel_url)
+    href = str.split(os.path.join(rel_dir, href), '/')
+    while True:
+        try:
+            i_of_rel = href.index('..')
+            if i_of_rel is 0:
+                break
+
+            del href[i_of_rel]
+            del href[i_of_rel - 1]
+        except ValueError:
+            break
+
+    href[-1], _ = os.path.splitext(href[-1])
+    return os.path.join(*href)
+
 # normalize href to #foo/bar/section:id
-def normalized_href(href: str, rel_url: str):
+def transform_href(href: str, rel_url: str):
     head, tail = os.path.split(href)
 
     num_hashtags = tail.count('#')
-    if num_hashtags is 0:
-        return href
-    elif num_hashtags > 1:
-        raise RuntimeError('Why are there so many hashtags in {}!?!?'.format(href))
 
     if tail.startswith('#'):
         head, section = os.path.split(rel_url)
         section = os.path.splitext(section)[0]
         id = tail[1:]
-    else:
+    elif num_hashtags is 1:
         section, ext = tuple(os.path.splitext(tail))
         id = str.split(ext, '#')[1]
+    elif num_hashtags is 0:
+        if not is_doc(href):
+            return href
+
+        href = normalize_href(href, rel_url)
+        return '#{}:'.format(href)
+
+    elif num_hashtags > 1:
+        raise RuntimeError('Why are there so many hashtags in {}!?!?'.format(href))
+
 
     return '#{}/{}:{}'.format(head, section, id)
 
 # normalize id to foo/bar/section:id
-def normalized_id(id: str, rel_url: str):
+def transform_id(id: str, rel_url: str):
     if ':' in id or '/' in id:
         print('":" and "/" characters are banned! /:')
         raise RuntimeError('Invalid ID found in {}, ID: {}'.format(rel_url, id))
 
     head, tail = os.path.split(rel_url)
-    section, _ = tuple(os.path.splitext(tail))
+    section, _ = os.path.splitext(tail)
 
     return '{}/{}:{}'.format(head, section, id)
 
+def inject_body_id(url: str):
+    section, _ = os.path.splitext(url)
+    return '{}:'.format(section)
+
 def prep_combined(soup: BeautifulSoup, base_url: str, rel_url: str):
     for id in soup.find_all(id=True):
-        id['id'] = normalized_id(id['id'], rel_url)
+        id['id'] = transform_id(id['id'], rel_url)
 
     for a in soup.find_all('a', href=True):
         if urls.url_is_absolute(a['href']) or os.path.isabs(a['href']):
             continue
 
-        a['href'] = normalized_href(a['href'], rel_url)
-
+        a['href'] = transform_href(a['href'], rel_url)
+    
+    soup.body['id'] = inject_body_id(rel_url)
     soup = replace_asset_hrefs(soup, base_url)
     return soup
 

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='mkdocs-pdf-export-plugin',
-    version='0.5.1b1',
+    version='0.5.1b3',
     description='An MkDocs plugin to export content pages as PDF files',
     long_description='The pdf-export plugin will export all markdown pages in your MkDocs repository as PDF files'
                      'using WeasyPrint. The exported documents support many advanced features missing in most other'
