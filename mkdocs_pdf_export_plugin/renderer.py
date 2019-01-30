@@ -7,7 +7,7 @@ from weasyprint import HTML, Document
 from bs4 import BeautifulSoup
 
 from .themes import generic as generic_theme
-
+from . import preprocessor
 
 class Renderer(object):
     def __init__(self, combined: bool, theme: str, theme_handler_path: str=None):
@@ -19,7 +19,7 @@ class Renderer(object):
     def write_pdf(self, content: str, base_url: str, filename: str):
         self.render_doc(content, base_url).write_pdf(filename)
 
-    def render_doc(self, content: str, base_url: str):
+    def render_doc(self, content: str, base_url: str, rel_url: str = None):
         soup = BeautifulSoup(content, 'html.parser')
 
         stylesheet = self.theme.get_stylesheet()
@@ -29,11 +29,16 @@ class Renderer(object):
 
             soup.head.append(style_tag)
 
-        html = HTML(string=str(soup), base_url=base_url)
+        if self.combined:
+            soup = preprocessor.prep_combined(soup, base_url, rel_url)
+        else:
+            soup = preprocessor.replace_hrefs(soup, base_url)
+
+        html = HTML(string=str(soup))
         return html.render()
 
     def add_doc(self, content: str, base_url: str, rel_url: str):
-        render = self.render_doc(content, base_url)
+        render = self.render_doc(content, base_url, rel_url)
         pos = self.page_order.index(rel_url)
         self.pages[pos] = render
 
