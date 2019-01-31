@@ -32,7 +32,7 @@ class Renderer(object):
         if self.combined:
             soup = preprocessor.prep_combined(soup, base_url, rel_url)
         else:
-            soup = preprocessor.replace_hrefs(soup, base_url)
+            soup = preprocessor.prep_separate(soup, base_url)
 
         html = HTML(string=str(soup))
         return html.render()
