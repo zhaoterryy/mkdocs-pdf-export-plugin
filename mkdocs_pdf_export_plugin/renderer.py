@@ -22,7 +22,8 @@ class Renderer(object):
 
     def render_doc(self, content: str, base_url: str, rel_url: str = None):
         soup = BeautifulSoup(content, 'html.parser')
-        self._inject_pgnum(soup)
+
+        self.inject_pgnum(soup)
 
         stylesheet = self.theme.get_stylesheet()
         if stylesheet:
@@ -40,32 +41,34 @@ class Renderer(object):
         return html.render()
 
     def add_doc(self, content: str, base_url: str, rel_url: str):
-        render = self.render_doc(content, base_url, rel_url)
         pos = self.page_order.index(rel_url)
-        self.pages[pos] = render
-        self.pgnum += len(render.pages)
+        self.pages[pos] = (content, base_url, rel_url)
 
     def write_combined_pdf(self, output_path: str):
-        flatten = lambda l: [item for sublist in l for item in sublist]
-        pages = flatten([p.pages for p in self.pages if p != None])
+        rendered_pages = []
+        for p in self.pages:
+            render = self.render_doc(p[0], p[1], p[2])
+            self.pgnum += len(render.pages)
+            rendered_pages.append(render)
 
-        self.pages[0].copy(pages).write_pdf(output_path)
+        flatten = lambda l: [item for sublist in l for item in sublist]
+        all_pages = flatten([p.pages for p in rendered_pages if p != None])
+
+        rendered_pages[0].copy(all_pages).write_pdf(output_path)
 
     def add_link(self, content: str, filename: str):
         return self.theme.modify_html(content, filename)
 
-    def _inject_pgnum(self, soup):
+    def inject_pgnum(self, soup):
         pgnum_counter = soup.new_tag('style')
         pgnum_counter.string = '''
         @page :first {{
-            counter-reset: pgnum {}; 
+            counter-reset: __pgnum__ {}; 
         }}
         @page {{
-            counter-increment: pgnum;
+            counter-increment: __pgnum__;
         }}
         '''.format(self.pgnum)
-
-        print(self.pgnum)
 
         soup.head.append(pgnum_counter)
 
@@ -88,4 +91,3 @@ class Renderer(object):
         except ImportError as e:
             print('Could not load theme handler {}: {}'.format(theme, e), file=sys.stderr)
             return generic_theme
-

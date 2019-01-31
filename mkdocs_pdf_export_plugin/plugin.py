@@ -57,10 +57,12 @@ class PdfExportPlugin(BasePlugin):
         LOGGER.addHandler(handler)
 
     def on_nav(self, nav, config, files):
-        if self.enabled:
-            self.renderer.pages = [None] * len(nav.pages)
-            for page in nav.pages:
-                self.renderer.page_order.append(page.file.url)
+        if not self.enabled:
+            return nav
+
+        self.renderer.pages = [None] * len(nav.pages)
+        for page in nav.pages:
+            self.renderer.page_order.append(page.file.url)
 
         return nav
 
@@ -107,15 +109,22 @@ class PdfExportPlugin(BasePlugin):
         return output_content
 
     def on_post_build(self, config):
+        if not self.enabled:
+            return
+
         if self.combined:
+            start = timer()
+
             abs_pdf_path = os.path.join(config['site_dir'], self.config['combined_output_path'])
             os.makedirs(os.path.dirname(abs_pdf_path), exist_ok=True)
             self.renderer.write_combined_pdf(abs_pdf_path)
 
-        if self.enabled:
-            print('Converting {} files to PDF took {:.1f}s'.format(self.num_files, self.total_time))
-            if self.num_errors > 0:
-                print('{} conversion errors occurred (see above)'.format(self.num_errors))
+            end = timer()
+            self.total_time += (end - start)
+
+        print('Converting {} files to PDF took {:.1f}s'.format(self.num_files, self.total_time))
+        if self.num_errors > 0:
+            print('{} conversion errors occurred (see above)'.format(self.num_errors))
 
     def get_path_to_pdf_from(self, start):
         pdf_split = os.path.split(self.config['combined_output_path'])
