@@ -14,6 +14,7 @@ class Renderer(object):
         self.theme = self._load_theme_handler(theme, theme_handler_path)
         self.combined = combined
         self.page_order = []
+        self.pgnum = 0
         self.pages = []
 
     def write_pdf(self, content: str, base_url: str, filename: str):
@@ -21,6 +22,7 @@ class Renderer(object):
 
     def render_doc(self, content: str, base_url: str, rel_url: str = None):
         soup = BeautifulSoup(content, 'html.parser')
+        self._inject_pgnum(soup)
 
         stylesheet = self.theme.get_stylesheet()
         if stylesheet:
@@ -41,6 +43,7 @@ class Renderer(object):
         render = self.render_doc(content, base_url, rel_url)
         pos = self.page_order.index(rel_url)
         self.pages[pos] = render
+        self.pgnum += len(render.pages)
 
     def write_combined_pdf(self, output_path: str):
         flatten = lambda l: [item for sublist in l for item in sublist]
@@ -50,6 +53,21 @@ class Renderer(object):
 
     def add_link(self, content: str, filename: str):
         return self.theme.modify_html(content, filename)
+
+    def _inject_pgnum(self, soup):
+        pgnum_counter = soup.new_tag('style')
+        pgnum_counter.string = '''
+        @page :first {{
+            counter-reset: pgnum {}; 
+        }}
+        @page {{
+            counter-increment: pgnum;
+        }}
+        '''.format(self.pgnum)
+
+        print(self.pgnum)
+
+        soup.head.append(pgnum_counter)
 
     @staticmethod
     def _load_theme_handler(theme: str, custom_handler_path: str = None):
