@@ -1,0 +1,17 @@
+site_name: mkdocs-pdf-export-plugin
+theme:
+  name: cinder
+use_directory_urls: false
+plugins:
+  - search
+  - pdf-export:
+      combined: true
+      theme_handler_path: theme-handler/cinder.py
+
+nav:
+  - Intro: index.md
+  - Options: options.md
+
+repo_url: https://github.com/zhaoterryy/mkdocs-pdf-export-plugin
+edit_uri: edit/master/docs/
+remote_name: git@github.com:zhaoterryy/mkdocs-pdf-export-plugin.git
