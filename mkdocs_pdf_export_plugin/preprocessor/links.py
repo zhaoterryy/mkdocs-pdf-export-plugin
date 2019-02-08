@@ -93,10 +93,6 @@ def transform_href(href: str, rel_url: str):
 
 # normalize id to foo/bar/section:id
 def transform_id(id: str, rel_url: str):
-    if ':' in id or '/' in id:
-        print('":" and "/" characters are banned! /:')
-        raise RuntimeError('Invalid ID found in {}, ID: {}'.format(rel_url, id))
-
     head, tail = os.path.split(rel_url)
     section, _ = os.path.splitext(tail)
 
