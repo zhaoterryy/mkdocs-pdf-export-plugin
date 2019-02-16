@@ -78,6 +78,11 @@ def transform_href(href: str, rel_url: str):
     elif num_hashtags is 1:
         section, ext = tuple(os.path.splitext(tail))
         id = str.split(ext, '#')[1]
+        
+        if head == '..':
+            href = normalize_href(href, rel_url)
+            return '#{}:{}'.format(href, id)
+
     elif num_hashtags is 0:
         if not is_doc(href):
             return href
@@ -85,8 +90,6 @@ def transform_href(href: str, rel_url: str):
         href = normalize_href(href, rel_url)
         return '#{}:'.format(href)
 
-    elif num_hashtags > 1:
-        raise RuntimeError('Why are there so many hashtags in {}!?!?'.format(href))
 
 
     return '#{}/{}:{}'.format(head, section, id)
@@ -96,7 +99,10 @@ def transform_id(id: str, rel_url: str):
     head, tail = os.path.split(rel_url)
     section, _ = os.path.splitext(tail)
 
-    return '{}/{}:{}'.format(head, section, id)
+    if len(head) > 0:
+        head += '/'
+
+    return '{}{}:{}'.format(head, section, id)
 
 def inject_body_id(url: str):
     section, _ = os.path.splitext(url)

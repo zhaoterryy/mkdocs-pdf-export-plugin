@@ -6,7 +6,6 @@ from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
 from mkdocs import utils
 
-
 class PdfExportPlugin(BasePlugin):
 
     DEFAULT_MEDIA_TYPE = 'print'
