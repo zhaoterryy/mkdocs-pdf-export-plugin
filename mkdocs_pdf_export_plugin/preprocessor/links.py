@@ -6,6 +6,9 @@ from bs4 import BeautifulSoup
 # check if href is relative --
 # if it is relative it *should* be an html that generates a PDF doc
 def is_doc(href: str):
+    if href == '.' or href.endswith('/'):
+        return True
+
     tail = os.path.basename(href)
     _, ext = os.path.splitext(tail)
 
@@ -68,18 +71,20 @@ def normalize_href(href: str, rel_url: str):
 # normalize href to #foo/bar/section:id
 def transform_href(href: str, rel_url: str):
     head, tail = os.path.split(href)
-
     num_hashtags = tail.count('#')
+
+    # print('head: {}\ttail: {}\thref: {}\trel_url: {}'.format(head, tail, href, rel_url))
 
     if tail.startswith('#'):
         head, section = os.path.split(rel_url)
         section = os.path.splitext(section)[0]
+
         id = tail[1:]
     elif num_hashtags is 1:
         section, ext = tuple(os.path.splitext(tail))
         id = str.split(ext, '#')[1]
-        
-        if head == '..':
+
+        if head is '..':
             href = normalize_href(href, rel_url)
             return '#{}:{}'.format(href, id)
 
@@ -90,9 +95,14 @@ def transform_href(href: str, rel_url: str):
         href = normalize_href(href, rel_url)
         return '#{}:'.format(href)
 
+    elif num_hashtags > 1:
+        raise RuntimeError('Why are there so many hashtags in {}!?!?'.format(href))
 
+    # print('head: {}\tsection: {}\tid: {}'.format(head, section, id))
+    if head is not '':
+        head += '/'
 
-    return '#{}/{}:{}'.format(head, section, id)
+    return '#{}{}:{}'.format(head, section, id)
 
 # normalize id to foo/bar/section:id
 def transform_id(id: str, rel_url: str):
@@ -102,8 +112,18 @@ def transform_id(id: str, rel_url: str):
     if len(head) > 0:
         head += '/'
 
-    return '{}{}:{}'.format(head, section, id)
+    path = head + section
+    if path.endswith('/'):
+        path = path[:-1]
+
+    # print('id: #{}:{}'.format(path, id))
+    return '{}:{}'.format(path, id)
 
 def inject_body_id(url: str):
     section, _ = os.path.splitext(url)
+
+    if section.endswith('/'):
+        section = section[:-1]
+
+    # print('id: #{}:'.format(section))
     return '{}:'.format(section)

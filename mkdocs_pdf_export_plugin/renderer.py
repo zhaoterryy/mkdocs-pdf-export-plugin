@@ -10,8 +10,9 @@ from .themes import generic as generic_theme
 from . import preprocessor
 
 class Renderer(object):
-    def __init__(self, combined: bool, theme: str, theme_handler_path: str=None):
+    def __init__(self, combined: bool, theme: str, dir_urls: bool, theme_handler_path: str=None):
         self.theme = self._load_theme_handler(theme, theme_handler_path)
+        self.dir_urls = dir_urls
         self.combined = combined
         self.page_order = []
         self.pgnum = 0
@@ -33,7 +34,7 @@ class Renderer(object):
             soup.head.append(style_tag)
 
         if self.combined:
-            soup = preprocessor.prep_combined(soup, base_url, rel_url)
+            soup = preprocessor.prep_combined(soup, base_url, rel_url, self.dir_urls)
         else:
             soup = preprocessor.prep_separate(soup, base_url)
 

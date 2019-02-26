@@ -41,7 +41,7 @@ class PdfExportPlugin(BasePlugin):
             print('Combined PDF export is enabled')
 
         from .renderer import Renderer
-        self.renderer = Renderer(self.combined, config['theme'].name, self.config['theme_handler_path'])
+        self.renderer = Renderer(self.combined, config['theme'].name, config['use_directory_urls'], self.config['theme_handler_path'])
 
         from weasyprint.logger import LOGGER
         import logging
