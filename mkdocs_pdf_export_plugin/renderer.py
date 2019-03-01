@@ -7,7 +7,8 @@ from weasyprint import HTML, Document
 from bs4 import BeautifulSoup
 
 from .themes import generic as generic_theme
-from . import preprocessor
+from .preprocessor import get_separate as prep_separate, get_combined as prep_combined
+
 
 class Renderer(object):
     def __init__(self, combined: bool, theme: str, theme_handler_path: str=None):
@@ -32,10 +33,11 @@ class Renderer(object):
 
             soup.head.append(style_tag)
 
+        
         if self.combined:
-            soup = preprocessor.prep_combined(soup, base_url, rel_url)
+            soup = prep_combined(soup, base_url, rel_url)
         else:
-            soup = preprocessor.prep_separate(soup, base_url)
+            soup = prep_separate(soup, base_url)
 
         html = HTML(string=str(soup))
         return html.render()
