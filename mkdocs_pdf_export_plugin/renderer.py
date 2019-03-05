@@ -49,9 +49,12 @@ class Renderer(object):
     def write_combined_pdf(self, output_path: str):
         rendered_pages = []
         for p in self.pages:
-            render = self.render_doc(p[0], p[1], p[2])
-            self.pgnum += len(render.pages)
-            rendered_pages.append(render)
+            try:
+               render = self.render_doc(p[0], p[1], p[2])
+               self.pgnum += len(render.pages)
+               rendered_pages.append(render)
+            except:
+                print("Unexpected error:", sys.exc_info()[0])
 
         flatten = lambda l: [item for sublist in l for item in sublist]
         all_pages = flatten([p.pages for p in rendered_pages if p != None])
