@@ -67,5 +67,4 @@ def normalize_href(href: str, rel_url: str):
 
 def get_body_id(url: str):
     section, _ = os.path.splitext(url)
-    print('bodyid: #{}:'.format(section))
     return '{}:'.format(section)

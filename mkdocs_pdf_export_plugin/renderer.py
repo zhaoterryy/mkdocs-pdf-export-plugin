@@ -9,7 +9,6 @@ from bs4 import BeautifulSoup
 from .themes import generic as generic_theme
 from .preprocessor import get_separate as prep_separate, get_combined as prep_combined
 
-
 class Renderer(object):
     def __init__(self, combined: bool, theme: str, theme_handler_path: str=None):
         self.theme = self._load_theme_handler(theme, theme_handler_path)
@@ -49,6 +48,10 @@ class Renderer(object):
     def write_combined_pdf(self, output_path: str):
         rendered_pages = []
         for p in self.pages:
+            if p is None:
+                print('Unexpected error - not all pages were rendered properly')
+                continue
+
             render = self.render_doc(p[0], p[1], p[2])
             self.pgnum += len(render.pages)
             rendered_pages.append(render)

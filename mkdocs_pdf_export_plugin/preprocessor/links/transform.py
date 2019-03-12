@@ -40,5 +40,4 @@ def transform_id(id: str, rel_url: str):
     if len(head) > 0:
         head += '/'
 
-    print('id: #{}{}:{}'.format(head, section, id))
     return '{}{}:{}'.format(head, section, id)
