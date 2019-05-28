@@ -119,6 +119,7 @@ The resulting PDF can be customized easily by adding a custom stylesheet such as
     }
 }
 ```
+For this to take effect, use the `extra_css` directive in mkdocs.yml, as described in the [MkDocs user guide][extra-css].
 
 ## Adding support for new themes
 
@@ -152,3 +153,4 @@ Special thanks go to [Lukas Geiter][lukasgeiter] for developing the [mkdocs-awes
 [lukasgeiter]: https://github.com/lukasgeiter
 [shauser]: https://github.com/shauser
 [awesome-pages-plugin]: https://github.com/lukasgeiter/mkdocs-awesome-pages-plugin
+[extra-css]: https://www.mkdocs.org/user-guide/configuration/#extra_css
