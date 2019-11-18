@@ -10,12 +10,13 @@ from .themes import generic as generic_theme
 from .preprocessor import get_separate as prep_separate, get_combined as prep_combined
 
 class Renderer(object):
-    def __init__(self, combined: bool, theme: str, theme_handler_path: str=None):
+    def __init__(self, combined: bool, theme: str, theme_handler_path: str=None, output_dir: str='site'):
         self.theme = self._load_theme_handler(theme, theme_handler_path)
         self.combined = combined
         self.page_order = []
         self.pgnum = 0
         self.pages = []
+        self.output_dir = output_dir
 
     def write_pdf(self, content: str, base_url: str, filename: str):
         self.render_doc(content, base_url).write_pdf(filename)
@@ -34,7 +35,7 @@ class Renderer(object):
 
         
         if self.combined:
-            soup = prep_combined(soup, base_url, rel_url)
+            soup = prep_combined(soup, base_url, rel_url, self.output_dir)
         else:
             soup = prep_separate(soup, base_url)
 
@@ -45,7 +46,7 @@ class Renderer(object):
         pos = self.page_order.index(rel_url)
         self.pages[pos] = (content, base_url, rel_url)
 
-    def write_combined_pdf(self, output_path: str):
+    def write_combined_pdf(self, output_path: str, output_dir:str):
         rendered_pages = []
         for p in self.pages:
             if p is None:

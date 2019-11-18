@@ -1,4 +1,12 @@
-# MkDocs PDF Export Plugin [![Build Status][travis-status]][travis-link]
+# MkDocs PDF Export Plugin (refactored)
+
+This project is a fork of mkdocs-pdf-export-plugin by @zhaoterryy.
+
+This version correctly resolves inter-page cross reference links in generated PDF documents, no matter where they are in a nested directory structure.
+
+**IMPORTANT** I have not registered this package with PyPi and following the instructions below will install the *original* package, not this one. For now the only way to use this is to install it locally, or use pip and then overwrite the plugin with these files.
+
+---
 
 *An MkDocs plugin to export content pages as PDF files*
 

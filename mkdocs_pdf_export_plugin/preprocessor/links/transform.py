@@ -1,36 +1,32 @@
 import os
 
-from .util import is_doc, normalize_href
+from .util import is_doc, normalize_href, abs_asset_href, get_xref_href
 
 # normalize href to #foo/bar/section:id
-def transform_href(href: str, rel_url: str):
-    head, tail = os.path.split(href)
+def transform_href(href: str, rel_url: str, base_url: str, output_dir: str):
 
-    num_hashtags = tail.count('#')
+    # print('---')
+    # print('Link in: "{}". baseurl:"{}". rel_url:"{}"'.format(href, base_url, rel_url))
+    if href.count('#') is 1:
 
-    if tail.startswith('#'):
-        head, section = os.path.split(rel_url)
-        section = os.path.splitext(section)[0]
-        id = tail[1:]
-    elif num_hashtags is 1:
-        section, ext = tuple(os.path.splitext(tail))
-        id = str.split(ext, '#')[1]
-        
-        if head == '..':
-            href = normalize_href(href, rel_url)
-            return '#{}:{}'.format(href, id)
+        path, anchor = href.split('#')
 
-    elif num_hashtags is 0:
-        if not is_doc(href):
-            return href
+        if path is '':
+            # print('Building xref. Path:{}, base_url:{}'.format(path,base_url))
+            xref = rel_url.strip('/')
+        else:
+            xref = get_xref_href(path.strip('/'), base_url, output_dir)
 
-        href = normalize_href(href, rel_url)
-        return '#{}:'.format(href)
+        out = '#{}:{}'.format(xref, anchor)
 
-    if head != '':
-        head += '/'
+    else:
+        xref = get_xref_href(href, base_url, output_dir)
 
-    return '#{}{}:{}'.format(head, section, id)
+        out = '#{}:'.format(xref)
+
+    # print('Link out: "{}"'.format(out))
+    return out
+
 
 # normalize id to foo/bar/section:id
 def transform_id(id: str, rel_url: str):
