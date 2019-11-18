@@ -16,7 +16,9 @@ class PdfExportPlugin(BasePlugin):
         ('enabled_if_env', config_options.Type(utils.string_types)),
         ('combined', config_options.Type(bool, default=False)),
         ('combined_output_path', config_options.Type(utils.string_types, default="pdf/combined.pdf")),
-        ('theme_handler_path', config_options.Type(utils.string_types))
+        ('theme_handler_path', config_options.Type(utils.string_types)),
+        # Declaring 'docs' base directory manually here; this should come in with the global config object though!
+        ('output_dir', config_options.Type(utils.string_types, default='site'))
     )
 
     def __init__(self):
@@ -41,8 +43,7 @@ class PdfExportPlugin(BasePlugin):
             print('Combined PDF export is enabled')
 
         from .renderer import Renderer
-        self.renderer = Renderer(self.combined, config['theme'].name, self.config['theme_handler_path'])
-
+        self.renderer = Renderer(self.combined, config['theme'].name, self.config['theme_handler_path'], self.config['output_dir'])
         from weasyprint.logger import LOGGER
         import logging
 
@@ -88,6 +89,7 @@ class PdfExportPlugin(BasePlugin):
 
         from weasyprint import urls
         base_url = urls.path2url(os.path.join(path, filename))
+
         pdf_file = filename + '.pdf'
 
         try:
@@ -116,7 +118,7 @@ class PdfExportPlugin(BasePlugin):
 
             abs_pdf_path = os.path.join(config['site_dir'], self.config['combined_output_path'])
             os.makedirs(os.path.dirname(abs_pdf_path), exist_ok=True)
-            self.renderer.write_combined_pdf(abs_pdf_path)
+            self.renderer.write_combined_pdf(abs_pdf_path, self.config['output_dir'])
 
             end = timer()
             self.total_time += (end - start)

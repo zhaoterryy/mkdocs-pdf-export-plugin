@@ -59,7 +59,7 @@ def normalize_href(href: str, rel_url: str):
             return x
 
     rel_dir = os.path.dirname(rel_url)
-    href = str.split(os.path.join(rel_dir, href), '/')
+    href = str.split(os.path.join(rel_dir, href), os.sep)
     href = reduce_rel(href)
     href[-1], _ = os.path.splitext(href[-1])
 
@@ -67,4 +67,14 @@ def normalize_href(href: str, rel_url: str):
 
 def get_body_id(url: str):
     section, _ = os.path.splitext(url)
-    return '{}:'.format(section)
+    return '{}:'.format(section).strip('/')
+
+# Prepare inter-page xrefs; these are recalculated relative to the output directory
+def get_xref_href(href: str, base_url: str, output_dir: str):
+    full_url = urls.iri_to_uri(urls.urljoin(base_url, href))
+    rel_url = full_url.split(output_dir)[-1]
+    out, _ = os.path.splitext(rel_url)
+
+    return out.strip('/')
+    
+
