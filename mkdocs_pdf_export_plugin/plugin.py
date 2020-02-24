@@ -11,12 +11,12 @@ class PdfExportPlugin(BasePlugin):
     DEFAULT_MEDIA_TYPE = 'print'
 
     config_scheme = (
-        ('media_type', config_options.Type(utils.string_types, default=DEFAULT_MEDIA_TYPE)),
+        ('media_type', config_options.Type(str, default=DEFAULT_MEDIA_TYPE)),
         ('verbose', config_options.Type(bool, default=False)),
-        ('enabled_if_env', config_options.Type(utils.string_types)),
+        ('enabled_if_env', config_options.Type(str)),
         ('combined', config_options.Type(bool, default=False)),
-        ('combined_output_path', config_options.Type(utils.string_types, default="pdf/combined.pdf")),
-        ('theme_handler_path', config_options.Type(utils.string_types))
+        ('combined_output_path', config_options.Type(str, default="pdf/combined.pdf")),
+        ('theme_handler_path', config_options.Type(str))
     )
 
     def __init__(self):
