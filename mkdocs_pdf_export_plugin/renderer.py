@@ -3,7 +3,7 @@ import os
 
 from importlib import import_module
 from importlib.util import spec_from_file_location, module_from_spec
-from weasyprint import HTML, Document
+from weasyprint import HTML
 from bs4 import BeautifulSoup
 
 from .themes import generic as generic_theme
