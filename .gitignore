@@ -5,6 +5,10 @@ __pycache__/
 /build/
 /dist/
 
+# test relative
+.tox/
+.coverage
+
 !.gitkeep
 
 .DS_Store

@@ -2,37 +2,40 @@ import os
 
 from .util import is_doc, normalize_href
 
-# normalize href to #foo/bar/section:id
+
 def transform_href(href: str, rel_url: str):
+    # normalize href to #foo/bar/section:id
+    if href.startswith('#') and ':' in href:
+        return href
+
     head, tail = os.path.split(href)
-
-    num_hashtags = tail.count('#')
-
-    if tail.startswith('#'):
+    section = ''
+    id = ''
+    if not head:
         head, section = os.path.split(rel_url)
         section = os.path.splitext(section)[0]
-        id = tail[1:]
-    elif num_hashtags is 1:
-        section, ext = tuple(os.path.splitext(tail))
-        id = str.split(ext, '#')[1]
-        
-        if head == '..':
-            href = normalize_href(href, rel_url)
-            return '#{}:{}'.format(href, id)
-
-    elif num_hashtags is 0:
-        if not is_doc(href):
-            return href
-
-        href = normalize_href(href, rel_url)
-        return '#{}:'.format(href)
+    else:
+        head = normalize_href(head, rel_url)
 
     if head != '':
         head += '/'
 
+    if tail.startswith('#'):
+        id = tail[1:]
+    elif '#' in tail:
+        section, id = str.rsplit(tail, '#', 1)
+        section, dummy_ext = os.path.splitext(section)
+    else:
+        if not is_doc(href):
+            return href
+
+        return '#{}{}:'.format(head, tail)
+
     return '#{}{}:{}'.format(head, section, id)
 
 # normalize id to foo/bar/section:id
+
+
 def transform_id(id: str, rel_url: str):
     head, tail = os.path.split(rel_url)
     section, _ = os.path.splitext(tail)
