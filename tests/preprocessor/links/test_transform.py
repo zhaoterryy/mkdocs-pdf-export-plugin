@@ -36,3 +36,9 @@ def test_transform_href():
     # test for #70
     assert transform_href("index.md#4.-New-Section",
                           "a/b/") == "#a/b/index:4.-New-Section"
+
+    # test footnotes
+    assert transform_href("index.md#fn:1", "a/b/") == "#a/b/index:fn:1"
+    assert transform_href("index.md#fnref:@#$%",
+                          "a/b/") == "#a/b/index:fnref:@#$%"
+    assert transform_href("#fnref:@#$%", "a/b/") == "#a/b/:fnref:@#$%"

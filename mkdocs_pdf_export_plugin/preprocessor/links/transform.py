@@ -5,9 +5,6 @@ from .util import is_doc, normalize_href
 
 def transform_href(href: str, rel_url: str):
     # normalize href to #foo/bar/section:id
-    if href.startswith('#') and ':' in href:
-        return href
-
     head, tail = os.path.split(href)
     section = ''
     id = ''
@@ -23,7 +20,7 @@ def transform_href(href: str, rel_url: str):
     if tail.startswith('#'):
         id = tail[1:]
     elif '#' in tail:
-        section, id = str.rsplit(tail, '#', 1)
+        section, id = str.split(tail, '#', 1)
         section, dummy_ext = os.path.splitext(section)
     else:
         if not is_doc(href):
