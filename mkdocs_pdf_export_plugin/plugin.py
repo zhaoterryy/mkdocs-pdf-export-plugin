@@ -128,4 +128,5 @@ class PdfExportPlugin(BasePlugin):
     def get_path_to_pdf_from(self, start):
         pdf_split = os.path.split(self.config['combined_output_path'])
         start_dir = os.path.split(start)[0]
-        return os.path.join(os.path.relpath(pdf_split[0], start_dir), pdf_split[1])
+        pdf_dir = pdf_split[0] if pdf_split[0] else '.'
+        return os.path.join(os.path.relpath(pdf_dir, start_dir), pdf_split[1])
