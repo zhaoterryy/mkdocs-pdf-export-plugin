@@ -30,6 +30,11 @@ def get_stylesheet() -> str:
         display: inline-block;
     }
     
+    .md-typeset a.footnote-backref {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
     .md-typeset .admonition {
         display: block;
         border-top: .1rem solid rgba(0,0,0,.07);
