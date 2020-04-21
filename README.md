@@ -7,7 +7,7 @@ The pdf-export plugin will export all markdown pages in your MkDocs repository a
 ## Requirements
 
 1. This package requires MkDocs version 1.0 or higher (0.17 works as well)
-2. Python 3.4 or higher
+2. Python ~3.4~ 3.5 or higher
 3. WeasyPrint depends on cairo, Pango and GDK-PixBuf which need to be installed separately. Please follow the installation instructions for your platform carefully:
     - [Linux][weasyprint-linux]
     - [MacOS][weasyprint-macos]
