@@ -12,7 +12,7 @@ The pdf-export plugin will export all markdown pages in your MkDocs repository a
     - [Linux][weasyprint-linux]
     - [MacOS][weasyprint-macos]
     - [Windows][weasyprint-windows]
-4. Explicit support for your mkdocs theme is probably required. As of now, the only supported theme is [mkdocs-material](mkdocs-material). A generic version will just generate the PDF files and put the download link into a `<link>` tag.
+4. Explicit support for your mkdocs theme is probably required. As of now, the only supported theme is [mkdocs-material](https://github.com/squidfunk/mkdocs-material). A generic version will just generate the PDF files and put the download link into a `<link>` tag.
 
 If you want to add a new theme, see [adding support for new themes](#adding-support-for-new-themes) for more information.
 
