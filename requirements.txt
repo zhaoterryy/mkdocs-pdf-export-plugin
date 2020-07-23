@@ -6,13 +6,13 @@ click==6.7
 cssselect2==0.2.1
 defusedxml==0.5.0
 html5lib==1.0.1
-Jinja2==2.10
+Jinja2==2.11.2
 livereload==2.5.2
 Markdown==2.6.11
-MarkupSafe==1.0
+MarkupSafe==1.1.1
 mkdocs==1.0.3
 pdfrw==0.4
-Pillow==6.2.0
+Pillow==6.2.2
 pycparser==2.18
 Pyphen==0.9.5
 PyYAML>=4.2b1
