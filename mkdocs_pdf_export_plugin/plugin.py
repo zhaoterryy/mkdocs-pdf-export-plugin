@@ -53,6 +53,7 @@ class PdfExportPlugin(BasePlugin):
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
         LOGGER.addHandler(handler)
+        return config
 
     def on_nav(self, nav, config, files):
         if not self.enabled:
