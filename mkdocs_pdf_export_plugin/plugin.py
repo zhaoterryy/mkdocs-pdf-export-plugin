@@ -39,9 +39,6 @@ class PdfExportPlugin(BasePlugin):
         if self.combined:
             print('Combined PDF export is enabled')
 
-        from .renderer import Renderer
-        self.renderer = Renderer(self.combined, config['theme'].name, self.config['theme_handler_path'])
-
         from weasyprint.logger import LOGGER
         import logging
 
@@ -58,6 +55,9 @@ class PdfExportPlugin(BasePlugin):
     def on_nav(self, nav, config, files):
         if not self.enabled:
             return nav
+
+        from .renderer import Renderer
+        self.renderer = Renderer(self.combined, config['theme'].name, self.config['theme_handler_path'])
 
         self.renderer.pages = [None] * len(nav.pages)
         for page in nav.pages:
