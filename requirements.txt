@@ -12,7 +12,7 @@ Markdown==2.6.11
 MarkupSafe==1.1.1
 mkdocs==1.0.3
 pdfrw==0.4
-Pillow==6.2.2
+Pillow==9.0.0
 pycparser==2.18
 Pyphen==0.9.5
 PyYAML>=4.2b1
