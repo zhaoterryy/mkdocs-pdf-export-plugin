@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 from timeit import default_timer as timer
 
 from mkdocs.config import config_options
@@ -15,7 +16,8 @@ class PdfExportPlugin(BasePlugin):
         ('enabled_if_env', config_options.Type(str)),
         ('combined', config_options.Type(bool, default=False)),
         ('combined_output_path', config_options.Type(str, default="pdf/combined.pdf")),
-        ('theme_handler_path', config_options.Type(str))
+        ('theme_handler_path', config_options.Type(str)),
+        ('filter', config_options.Type(str))
     )
 
     def __init__(self):
@@ -56,17 +58,26 @@ class PdfExportPlugin(BasePlugin):
         if not self.enabled:
             return nav
 
+        matches = []
+
         from .renderer import Renderer
         self.renderer = Renderer(self.combined, config['theme'].name, self.config['theme_handler_path'])
 
         self.renderer.pages = [None] * len(nav.pages)
         for page in nav.pages:
             self.renderer.page_order.append(page.file.url)
+            match = re.search(self.config['filter'], page.file.name)
+            if match:
+                matches.append(page.file.name)
+
+        print('pdf export filter is : {}. Matching pages are : {}'.format(self.config['filter'], matches))
+
 
         return nav
 
     def on_post_page(self, output_content, page, config):
-        if not self.enabled:
+        match = re.search(self.config['filter'], page.file.name)
+        if not self.enabled or not match:
             return output_content
 
         start = timer()
