@@ -49,8 +49,8 @@ This option allows you to specify a custom theme handler module. This path must 
 `mkdocs.yml`:
 ```yaml
 plugins:
-	- pdf-export:
-		theme_handler_path: theme-handler.py
+    - pdf-export:
+        theme_handler_path: theme-handler.py
 
 ```
 
@@ -82,8 +82,8 @@ This option allows you to provide a regex patter to only process selected docume
 `mkdocs.yml`:
 ```yaml
 plugins:
-	- pdf-export:
-		filter: 'article|resume*'
+    - pdf-export:
+        filter: 'article|resume*'
 
 ```
 
