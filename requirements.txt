@@ -6,7 +6,7 @@ click==6.7
 cssselect2==0.2.1
 defusedxml==0.5.0
 html5lib==1.0.1
-Jinja2==2.11.2
+Jinja2==2.11.3
 livereload==2.5.2
 Markdown==2.6.11
 MarkupSafe==1.1.1
